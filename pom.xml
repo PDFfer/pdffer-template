@@ -13,13 +13,13 @@
 	<groupId>org.nekosoft.pdffer</groupId>
 	<artifactId>pdffer-template</artifactId>
 	<version>1.0.0</version>
+	<name>PDFfer Template</name>
 	<description>The definition of a PDFfer Template interface for the core library and custom template libraries</description>
 
 	<properties>
 		<maven.compiler.target>11</maven.compiler.target>
 		<maven.compiler.source>11</maven.compiler.source>
 	</properties>
-
 
 	<dependencies>
 		<dependency>
@@ -84,9 +84,6 @@
 				<executions>
 					<execution>
 						<id>attach-javadocs</id>
-						<configuration>
-							<locale>es</locale>
-						</configuration>
 						<goals>
 							<goal>jar</goal>
 						</goals>
