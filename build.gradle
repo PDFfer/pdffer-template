@@ -1,0 +1,90 @@
+plugins {
+	id 'org.springframework.boot' version '2.5.5'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java-library'
+	id 'maven-publish'
+	id 'signing'
+}
+
+group = 'org.nekosoft.pdffer'
+version = '1.0.0'
+sourceCompatibility = '11'
+
+repositories {
+	mavenCentral()
+}
+
+java {
+	withJavadocJar()
+	withSourcesJar()
+}
+
+bootJar {
+	enabled = false
+}
+
+jar {
+	enabled = true
+}
+
+dependencies {
+	api 'com.fasterxml.jackson.core:jackson-databind'
+}
+
+test {
+	useJUnitPlatform()
+}
+
+ext.isReleaseVersion = !version.endsWith("-SNAPSHOT")
+
+publishing {
+	repositories {
+		maven {
+			def releaseRepo = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+			def snapshotRepo = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+			url = isReleaseVersion ? releaseRepo : snapshotRepo
+			credentials {
+				username = project.hasProperty('ossrhUsername') ? project.getProperties().get('ossrhUsername') : System.getenv('OSSRH_USERNAME')
+				password = project.hasProperty('ossrhPassword') ? project.getProperties().get('ossrhPassword') : System.getenv('OSSRH_PASSWORD')
+			}
+		}
+	}
+
+	publications {
+		mavenJava(MavenPublication) {
+			pom {
+				description = 'The definition of a PDFfer Template interface for the core library and custom template libraries'
+				url = 'https://pdffer.nekosoft.org/'
+				from components.java
+				artifact (jar) {
+					classifier = null
+				}
+				licenses {
+					license {
+						name = 'The Apache License, Version 2.0'
+						url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+					}
+				}
+				developers {
+					developer {
+						name = 'Federico Mestrone'
+						email = 'federico@nekosoft.org'
+						organization = 'NekoSoft LLC'
+						organizationUrl = 'http://www.nekosoft.org'
+					}
+				}
+				scm {
+					connection = 'scm:git:git@github.com:PDFfer/pdffer-template.git'
+					url = 'https://github.com/PDFfer/pdffer-template'
+				}
+			}
+		}
+	}
+}
+
+signing {
+	sign publishing.publications.mavenJava
+}
+tasks.withType(Sign) {
+	onlyIf { isReleaseVersion }
+}
